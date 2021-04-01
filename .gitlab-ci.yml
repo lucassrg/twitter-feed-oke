@@ -1,0 +1,76 @@
+stages:
+  - test
+  - build
+  - deploy
+
+maven-test:
+  stage: test
+  image: maven:3.6.3-openjdk-8-slim
+  script:
+    - mvn test
+  only:
+    - master
+
+build:
+  stage: build
+  only:
+  - master
+  services:
+  - name: $DOCKER_IMAGE-dind
+  # Set the service alias to `localhost` so that it can work with both Kubernetes and Docker executors, assuming the host was setup with localhost.
+    alias: localhost
+  image: $DOCKER_IMAGE
+  variables: 
+  # Note that if you're using the Kubernetes executor, the variable 'DOCKER_HOST' should be set to
+  # tcp://localhost:2375/ (port 2375 when TLS DISABLED) because of how the Kubernetes executor connects services
+  # to the job container. 
+  # For Docker executor, eg, on gitLab.com the variable 'DOCKER_HOST' should be set to tcp://docker:2375/.
+    DOCKER_HOST: tcp://localhost:2375/
+    DOCKER_DRIVER: overlay2
+    DOCKER_TLS_CERTDIR: ""
+    DOCKER_IMAGE: docker:19.03.15
+    #Variables to connect to OCI Registry
+    OCI_REGISTRY_USERNAME: "$OCI_TENANCY_NAMESPACE/$OCI_USERNAME"
+    OCI_IMAGE_TAG: "$OCI_REGISTRY_ENDPOINT/$OCI_TENANCY_NAMESPACE/$CI_PROJECT_NAME/$CI_PROJECT_NAME:$CI_COMMIT_REF_SLUG$CI_COMMIT_SHA"
+
+  script:
+    # Push image to GitLab Project Container registry
+    - echo -n $OCI_AUTH_TOKEN | docker login --username $OCI_REGISTRY_USERNAME --password-stdin  $OCI_REGISTRY_ENDPOINT
+    - docker build . -t "$OCI_IMAGE_TAG"
+    - docker push $OCI_IMAGE_TAG
+
+setup_ocir_secret:
+  stage: deploy
+  only:
+  - master
+  image: 
+    name: bitnami/kubectl:latest
+    # Added entrypoint when running on gitlab.com due to https://gitlab.com/gitlab-org/gitlab-foss/-/issues/65110
+    entrypoint: [""]
+  variables:
+    OCI_REGISTRY_USERNAME: "$OCI_TENANCY_NAMESPACE/$OCI_USERNAME"
+  script:
+    - kubectl --kubeconfig="$KUBECONFIG" cluster-info
+    # delete existing secret
+    - kubectl --kubeconfig="$KUBECONFIG" delete secret ocir-twitter-feed-secret --ignore-not-found=true
+    - kubectl --kubeconfig="$KUBECONFIG" create secret docker-registry ocir-twitter-feed-secret --docker-server="$OCI_REGISTRY_ENDPOINT" --docker-username="$OCI_REGISTRY_USERNAME" --docker-password="$OCI_AUTH_TOKEN" --docker-email="nobody@oracle.com"
+  
+deploy_to_oke:
+  stage: deploy  
+  only:
+  - master
+  image: 
+    name: bitnami/kubectl:latest
+    # Added entrypoint when running on gitlab.com due to https://gitlab.com/gitlab-org/gitlab-foss/-/issues/65110
+    entrypoint: [""]
+  variables: 
+    OCI_IMAGE_TAG: "$OCI_REGISTRY_ENDPOINT/$OCI_TENANCY_NAMESPACE/$CI_PROJECT_NAME/$CI_PROJECT_NAME:$CI_COMMIT_REF_SLUG$CI_COMMIT_SHA"
+
+  script:
+    - kubectl --kubeconfig="$KUBECONFIG" cluster-info
+    - echo $OCI_IMAGE_TAG
+    # need to quote sed command otherwise it will not work within the Runner
+    - sed -i "s|{{CI_COMMIT_SHA}}|$CI_COMMIT_SHA|g" kubernetes.yml
+    - sed -i "s|{{OCI_IMAGE_TAG}}|$OCI_IMAGE_TAG|g" kubernetes.yml
+    - cat kubernetes.yml
+    - kubectl apply -f kubernetes.yml

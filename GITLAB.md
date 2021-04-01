@@ -40,9 +40,12 @@ Notes:
 1. If you don't have a repository in the OCI Container Registry, you can create one following the [documentation](https://docs.oracle.com/en-us/iaas/Content/Registry/Tasks/registrycreatingarepository.htm) or when you push the first Docker image through the CI/CD pipeline a new repository will be created automatically for you.
 2. If you don't have an Auth Token, you can generate one following the [documentation](https://docs.oracle.com/en-us/iaas/Content/Registry/Tasks/registrygettingauthtoken.htm). Take notes on the token as it is not displayed twice.
 
-### Creating Project CI/CD Variables
+### Integration with Oracle Cloud Infrastructure Container for Kubernetes (OKE)
 
-Now you can go back to GitLab and create the variables used by your Project during the CI/CD pipeline.
+
+### Create CI/CD Variables
+
+Now you can go back to GitLab and create your variables. Check the description of each individual key for more details.
 
 1. Go to `Settings > CI/CD -> Variables -> Expand`
 2. Click on `Add Variable` button and add the following variables:

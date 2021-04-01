@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: twitter-feed-v1
+  labels:
+    commit: {{CI_COMMIT_SHA}}
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: twitter-feed
+  template:
+    metadata:
+      labels:
+        app: twitter-feed
+        commit: {{CI_COMMIT_SHA}}
+    spec:
+      containers:
+      - name: twitter-feed
+        image: {{OCI_IMAGE_TAG}}
+        imagePullPolicy: Always
+        ports:
+        - name: twitter-feed
+          containerPort: 8080
+          protocol: TCP
+      imagePullSecrets:
+        - name: ocir-twitter-feed-secret
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: twitter-feed
+  labels:
+    app: twitter-feed
+spec:
+  ports:
+  - port: 30000
+    targetPort: 8080
+  selector:
+    app: twitter-feed
+  type: ClusterIP
+---

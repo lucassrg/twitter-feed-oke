@@ -1,9 +1,10 @@
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: twitter-feed-v2
+  name: twitter-feed-v1
+  # name: twitter-feed-v2
   labels:
-    commit: ${WERCKER_GIT_COMMIT}
+    commit: {{CI_COMMIT_SHA}}
 spec:
   replicas: 2
   selector:
@@ -13,21 +14,22 @@ spec:
     metadata:
       labels:
         app: twitter-feed
-        commit: ${WERCKER_GIT_COMMIT}
-        color: green
+        commit: {{CI_COMMIT_SHA}}
+        color: blue
+        # color: green
     spec:
       containers:
       - name: twitter-feed
-        image: ${DOCKER_REGISTRY}/${DOCKER_REPO}:${WERCKER_GIT_BRANCH}-${WERCKER_GIT_COMMIT}
+        image: {{OCI_IMAGE_TAG}}
         imagePullPolicy: Always
         ports:
         - name: twitter-feed
           containerPort: 8080
           protocol: TCP
         volumeMounts:
-          - name: podinfo
-            mountPath: /tmp
-            readOnly: false
+        - name: podinfo
+          mountPath: /tmp
+          readOnly: false
       volumes:
         - name: podinfo
           downwardAPI:
@@ -36,7 +38,7 @@ spec:
               fieldRef:
                 fieldPath: metadata.labels
       imagePullSecrets:
-        - name: wercker
+        - name: ocir-twitter-feed-secret
 ---
 apiVersion: v1
 kind: Service
@@ -44,13 +46,12 @@ metadata:
   name: twitter-feed
   labels:
     app: twitter-feed
-    commit: ${WERCKER_GIT_COMMIT}
 spec:
   ports:
   - port: 30000
     targetPort: 8080
   selector:
     app: twitter-feed
-    color: green
+    color: blue
   type: ClusterIP
 ---
