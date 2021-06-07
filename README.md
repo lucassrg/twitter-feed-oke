@@ -47,10 +47,10 @@ Now you can go back to GitLab and create the variables used by your Project duri
 1. Go to `Settings > CI/CD -> Variables -> Expand`
 2. Click on `Add Variable` button and add the following variables:
 
-|key|value|description|
-|--|--|--|
-|KUBECONFIG|`<Paste the content of the KUBECONFIG file>`|You can retrieve the KUBECONFIG file directly from the OCI Console. Go to the OCI Navigation menu `-> Solutions and Platform -> Developer Services -> Kubernetes Clusters`. Then, open-up the Cluster Details page of your cluster and click on the `Access Cluster` button. Follow the instructions based on either `Cloud Shell` or `Local` access to generate the KUBECONFIG file. Finnally, copy the content of the generated file into the variable.|
-|OCI_AUTH_TOKEN|`<auth-token>`| Enter the Auth token previously created. Make sure you follow security best practices to restrict access to your user to a specific registry and services. More details in the [documentation](https://docs.oracle.com/en-us/iaas/Content/Registry/Concepts/registrypolicyrepoaccess.htm). |
-|OCI_REGISTRY_ENDPOINT|https://`<region-prefix>`.ocir.io|You can check the list of available endpoints in the [documentation](https://docs.oracle.com/en-us/iaas/Content/Registry/Concepts/registryprerequisites.htm#regional-availability). E.g `https://iad.ocir.io`|
-|OCI_TENANCY_NAMESPACE|`<tenancy-namespace>`|You can retrieve the namespace directly from the Container Registry. Go to the OCI Navigation menu `-> Solutions and Platform -> Developer Services -> Container Registry`.|
-|OCI_USERNAME|`<username>`| Enter your OCI username, e.g. `jdoe@acme.com`. If your tenancy is federated with Oracle Identity Cloud Service, use `oracleidentitycloudservice/jdoe@acme.com`.|
+|key|value|type|description|
+|--|--|--|--|
+|KUBECONFIG|`<Paste the content of the KUBECONFIG file>`|File|You can retrieve the KUBECONFIG file directly from the OCI Console. Go to the OCI Navigation menu `-> Solutions and Platform -> Developer Services -> Kubernetes Clusters`. Then, open-up the Cluster Details page of your cluster and click on the `Access Cluster` button. Follow the instructions based on either `Cloud Shell` or `Local` access to generate the KUBECONFIG file. Finally, copy the content of the generated file into the variable.|
+|OCI_AUTH_TOKEN|`<auth-token>`|Variable| Enter the Auth token previously created. Make sure you follow security best practices to restrict access to your user to a specific registry and services. More details in the [documentation](https://docs.oracle.com/en-us/iaas/Content/Registry/Concepts/registrypolicyrepoaccess.htm). |
+|OCI_REGISTRY_ENDPOINT|Use `<region-prefix>`.ocir.io (without `https://`) |Variable|You can check the list of available endpoints in the [documentation](https://docs.oracle.com/en-us/iaas/Content/Registry/Concepts/registryprerequisites.htm#regional-availability). E.g `https://iad.ocir.io`|
+|OCI_TENANCY_NAMESPACE|`<tenancy-namespace>`|Variable|You can retrieve the namespace directly from the Container Registry. Go to the OCI Navigation menu `-> Solutions and Platform -> Developer Services -> Container Registry`.|
+|OCI_USERNAME|`<username>`|Variable| Enter your OCI username, e.g. `jdoe@acme.com`. If your tenancy is federated with Oracle Identity Cloud Service, use `oracleidentitycloudservice/jdoe@acme.com`.|
