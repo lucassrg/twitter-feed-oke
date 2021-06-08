@@ -49,7 +49,7 @@ Now you can go back to GitLab and create the variables used by your Project duri
 
 |key|value|type|description|
 |--|--|--|--|
-|KUBECONFIG|`<Paste the content of the KUBECONFIG file containing a Service Account token associated with a service account user used for CI/CD>`|File|Follow the instruction [below](#setup-a-kubernetes-service-account-with-auth-token) |
+|KUBECONFIG|`<Paste the content of the KUBECONFIG file containing a Service Account token associated with a service account user used for CI/CD>`|File|A KUBECONFIG file setup with a K8s Service Account using an Auth Token is required. Follow the instruction [below](#setup-a-kubernetes-service-account-with-auth-token) to setup the kubeconfig|
 |OCI_AUTH_TOKEN|`<auth-token>`|Variable| Enter the Auth token previously created. Make sure you follow security best practices to restrict access to your user to a specific registry and services. More details in the [documentation](https://docs.oracle.com/en-us/iaas/Content/Registry/Concepts/registrypolicyrepoaccess.htm). |
 |OCI_REGISTRY_ENDPOINT|Use `<region-prefix>`.ocir.io (without `https://`) |Variable|You can check the list of available endpoints in the [documentation](https://docs.oracle.com/en-us/iaas/Content/Registry/Concepts/registryprerequisites.htm#regional-availability). E.g `https://iad.ocir.io`|
 |OCI_TENANCY_NAMESPACE|`<tenancy-namespace>`|Variable|You can retrieve the namespace directly from the Container Registry. Go to the OCI Navigation menu `-> Solutions and Platform -> Developer Services -> Container Registry`.|
