@@ -9,12 +9,12 @@ maven-test:
   script:
     - mvn test
   only:
-    - master
+    - main
 
 build:
   stage: build
   only:
-  - master
+  - main
   services:
   - name: $DOCKER_IMAGE-dind
   # Set the service alias to `localhost` so that it can work with both Kubernetes and Docker executors, assuming the host was setup with localhost.
@@ -42,7 +42,7 @@ build:
 setup_ocir_secret:
   stage: deploy
   only:
-  - master
+  - main
   image: 
     name: bitnami/kubectl:latest
     # Added entrypoint when running on gitlab.com due to https://gitlab.com/gitlab-org/gitlab-foss/-/issues/65110
@@ -58,7 +58,7 @@ setup_ocir_secret:
 deploy_to_oke:
   stage: deploy  
   only:
-  - master
+  - main
   image: 
     name: bitnami/kubectl:latest
     # Added entrypoint when running on gitlab.com due to https://gitlab.com/gitlab-org/gitlab-foss/-/issues/65110
