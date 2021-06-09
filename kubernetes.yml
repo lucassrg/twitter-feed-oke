@@ -15,7 +15,7 @@ spec:
       labels:
         app: twitter-feed
         commit: {{CI_COMMIT_SHA}}
-        color: blue
+        # color: blue
         # color: green
     spec:
       containers:
@@ -52,6 +52,6 @@ spec:
     targetPort: 8080
   selector:
     app: twitter-feed
-    color: blue
+    # color: blue
   type: ClusterIP
 ---
