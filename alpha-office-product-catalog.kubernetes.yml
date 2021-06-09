@@ -1,9 +1,7 @@
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: product-catalog-app
-  labels:
-    commit: 4ca160fd05c003e5067fd6d9c8213656b24b962c
 spec:
   replicas: 2
   selector:
@@ -13,18 +11,17 @@ spec:
     metadata:
       labels:
         app: product-catalog-app
-        commit: 4ca160fd05c003e5067fd6d9c8213656b24b962c
     spec:
       containers:
       - name: product-catalog-app-container
-        image: derekoneil/alpha-office-product-catalog:master-4ca160fd05c003e5067fd6d9c8213656b24b962c
+        image: lucassrg/alpha-office-product-catalog:latest
         imagePullPolicy: Always
         ports:
         - name: pc-app-port
-          containerPort: 80
+          containerPort: 8085
           protocol: TCP
       imagePullSecrets:
-        - name: wercker
+        - name: ocir-twitter-feed-secret
 ---
 apiVersion: v1
 kind: Service
@@ -32,13 +29,12 @@ metadata:
   name: product-catalog-service
   labels:
     app: product-catalog-app
-    commit: 4ca160fd05c003e5067fd6d9c8213656b24b962c
 spec:
   ports:
   - port: 30000
-    targetPort: 80
+    targetPort: 8085
   selector:
     app: product-catalog-app
-    commit: 4ca160fd05c003e5067fd6d9c8213656b24b962c
   type: LoadBalancer
 ---
+
